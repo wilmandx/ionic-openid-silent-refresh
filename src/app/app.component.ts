@@ -87,7 +87,7 @@ export class MyApp {
     this.oauthService.tokenValidationHandler = new JwksValidationHandler();
     await this.oauthService.loadDiscoveryDocumentAndTryLogin();
     // Silent refresh activate
-    this.oauthService.setupAutomaticSilentRefresh();
+    //this.oauthService.setupAutomaticSilentRefresh();
 
     this.oauthService.events.subscribe(e => {
       // tslint:disable-next-line:no-console
@@ -101,15 +101,14 @@ export class MyApp {
     });
 
     console.log('ionViewDidLoad LoginPage, hasValidAccessToken=',this.oauthService.hasValidAccessToken());
-    /*if (this.oauthService.hasValidAccessToken()) {
-      console.log('Validate!!');
-      this.rootPage = TabsPage;
-    }*/
     if (this.oauthService.hasValidAccessToken()) {
       console.log('platffor ready access token ok!!');
       this.rootPage = TabsPage;
     } else {
       console.log('platffor ready but no valid accest takeng!!');
+      //IF YOU WANT GO TO EXTERNAL LOGIN DIRECTLY
+      //this.oauthService.initImplicitFlow();
+      //IF YOU WANT TO SHOW YOUR WELCOME PAGE WITH LOGIN BUTTON
       this.rootPage = LoginPage;
     }
   }
