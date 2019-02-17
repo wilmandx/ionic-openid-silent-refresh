@@ -11,8 +11,10 @@ import { TabsPage } from '../pages/tabs/tabs';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { LoginPage } from '../pages/login/login';
-import { OAuthModule } from 'angular-oauth2-oidc';
+import { OAuthModule, OAuthResourceServerErrorHandler } from 'angular-oauth2-oidc';
 import { HttpClientModule } from '@angular/common/http';
+import { ApiProvider } from '../providers/ApiProvider';
+import { OauthErrorHandler } from './utils/OauthErrorHandler';
 
 @NgModule({
   declarations: [
@@ -26,7 +28,12 @@ import { HttpClientModule } from '@angular/common/http';
   imports: [
     BrowserModule,
     HttpClientModule,
-    OAuthModule.forRoot(),
+    OAuthModule.forRoot({
+      resourceServer: {
+          allowedUrls: ['https://swapi.co/api/films/'],
+          sendAccessToken: true
+      }
+  }),
     IonicModule.forRoot(MyApp)
   ],
   bootstrap: [IonicApp],
@@ -41,7 +48,12 @@ import { HttpClientModule } from '@angular/common/http';
   providers: [
     StatusBar,
     SplashScreen,
-    {provide: ErrorHandler, useClass: IonicErrorHandler}
+    {
+      provide: OAuthResourceServerErrorHandler,
+      useClass: OauthErrorHandler
+    },
+    {provide: ErrorHandler, useClass: IonicErrorHandler},
+    ApiProvider
   ]
 })
 export class AppModule {}

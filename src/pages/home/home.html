@@ -12,7 +12,6 @@
 <ion-content padding>
   <h2>Welcome to Ionic!</h2>
   <p>
-    This starter project comes with simple tabs-based layout for apps
     that are going to primarily use a Tabbed UI.
   </p>
   <div *ngIf="givenName">
@@ -22,5 +21,11 @@
       <strong>Claims from Identity Token JWT:</strong>
       <pre>{{claims | json}}</pre>
     </div>
+  </div>
+  <div>
+    <button ion-button full (click)="callHttpService()">Test http interceptor</button>
+  </div>
+  <div>
+    <button ion-button full (click)="callSilentRefresh()">Test silent refresh</button>
   </div>
 </ion-content>

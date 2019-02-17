@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { Platform } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
@@ -28,7 +28,7 @@ const authConfig: AuthConfig = {
   // The first three are defined by OIDC. The 4th is a usecase-specific one
   scope: 'openid profile email',
   responseType : 'id_token token token_expires',
-  timeoutFactor: 0.1,
+  timeoutFactor: 0.03,
   showDebugInformation: true,
   silentRefreshIFrameName: 'XXXXXXX-refresh',
   silentRefreshShowIFrame: true
@@ -78,8 +78,24 @@ export class MyApp {
       splashScreen.hide();
       
     });
+
   }
 
+  @HostListener('window:focus', ['$event'])
+  onWindowFocus(ev:FocusEvent) {
+    // do something meaningful with it
+    console.log('focus on tab');
+    //Validate the access token is still there but it expire
+    if (this.oauthService.getAccessToken() && !this.oauthService.hasValidAccessToken()) {
+      console.log('Access token is expired, we need to force a silent refresh, maybe it was error before and it stoped');
+      this
+      .oauthService
+      .silentRefresh()
+      .then(info => console.debug('refresh ok', info))
+      .catch(err => console.error('refresh error', err));
+    }
+  }
+  
   async ngOnInit() {
     // Let's navigate from TabsPage to Page1
     console.log('ngOnInit configuring oauthService');
@@ -87,7 +103,7 @@ export class MyApp {
     this.oauthService.tokenValidationHandler = new JwksValidationHandler();
     await this.oauthService.loadDiscoveryDocumentAndTryLogin();
     // Silent refresh activate
-    //this.oauthService.setupAutomaticSilentRefresh();
+    this.oauthService.setupAutomaticSilentRefresh();
 
     this.oauthService.events.subscribe(e => {
       // tslint:disable-next-line:no-console
